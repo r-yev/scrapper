@@ -12,6 +12,7 @@ require __dir__ + '/src/Services/redis_service.rb'
 require __dir__ + '/src/Services/scrapper.rb'
 require __dir__ + '/src/Dto/job.rb'
 require __dir__ + '/src/Workers/worker.rb'
+require __dir__ + '/src/app.rb'
 
 def parse_html (data, job)
   arr = []
