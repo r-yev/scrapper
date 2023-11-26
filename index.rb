@@ -7,25 +7,23 @@ require __dir__ + '/bootstrap.rb'
 @redis_service = RedisService.new
 @scrapper_service = Scrapper.new
 
-def work
+while Integer(@redis_service.llen @jobs_queue) > 0
   fetched = @redis_service.lpop(@jobs_queue, @completed_jobs_queue)
 
   if fetched.nil?
-    puts "Nothing in queue"
+    throw new Exception('Nothing in queue')
   else
     job = JSON.parse(JSON.parse(fetched), object_class: Job)
 
-    elements = @scrapper_service.crawl(job.url)
-                            .get_by_query_select(job.selector)
-
-    result = []
-    elements.each do |element|
-      parsed = parse_html(element, job)
-      result.push(parsed)
+    thread = Thread.new do
+      worker = Worker.new @redis_service,
+                          @scrapper_service,
+                          @completed_jobs_queue,
+                          @jobs_queue,
+                          @results_queue
+      worker.work(job)
     end
 
-    @redis_service.rpush(@results_queue, result.to_json)
+    thread.join
   end
 end
-
-work

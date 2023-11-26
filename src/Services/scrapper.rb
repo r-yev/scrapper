@@ -1,6 +1,3 @@
-require "httparty"
-require "nokogiri"
-
 class Scrapper
   attr :http, :options, :html
 

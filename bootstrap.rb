@@ -1,11 +1,17 @@
 require 'dotenv'
 require 'json'
 require 'uri'
+require 'redis-objects'
+require 'connection_pool'
+require "httparty"
+require "nokogiri"
+
 Dotenv.load(__dir__ + '/.env')
 
 require __dir__ + '/src/Services/redis_service.rb'
 require __dir__ + '/src/Services/scrapper.rb'
 require __dir__ + '/src/Dto/job.rb'
+require __dir__ + '/src/Workers/worker.rb'
 
 def parse_html (data, job)
   arr = []

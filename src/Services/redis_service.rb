@@ -1,6 +1,3 @@
-require 'redis-objects'
-require 'connection_pool'
-
 class RedisService
   attr :list
   attr_accessor :redis
@@ -18,6 +15,11 @@ class RedisService
   def rpush (queue, value)
     list = @list.new queue
     list.push value
+  end
+
+  def llen (queue)
+    list = @list.new queue
+    Integer(list.size)
   end
 
 end
