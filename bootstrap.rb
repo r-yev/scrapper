@@ -7,12 +7,18 @@ require __dir__ + '/src/Services/redis_service.rb'
 require __dir__ + '/src/Services/scrapper.rb'
 require __dir__ + '/src/Dto/job.rb'
 
-def parse_html (data)
+def parse_html (data, job)
   arr = []
   arr.push('name' => data.name)
 
   if data.name == 'a'
-    arr.push('link' => data.attribute('href'))
+    link = data.attribute('href')
+
+    if link !=~ URI::regexp
+      link = job.url + link
+    end
+
+    arr.push('link' => link)
   end
 
   if data.name == 'img'
@@ -23,18 +29,14 @@ def parse_html (data)
     content = []
 
     data.children.each do |element|
-      content.push(parse_html(element))
+      content.push(parse_html(element, job))
     end
 
-    arr.push('content' => content)
+    arr.push('children' => content)
   else
     unless data.content.empty? || (data.content.include? "\r\n")
       arr.push('content' => data.content)
     end
   end
   arr
-end
-
-def fix_links (element)
-
 end
