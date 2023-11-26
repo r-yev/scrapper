@@ -1,22 +1,23 @@
-require 'redis'
+require 'redis-objects'
+require 'connection_pool'
 
 class RedisService
-  attr :redis
+  attr :list
+  attr_accessor :redis
 
   def initialize
-    @redis = Redis.new(
-      host: ENV['REDIS_HOST'],
-      port: ENV['REDIS_PORT'],
-      db: ENV['REDIS_DATABASE']
-    )
+    Redis::Objects.redis = ConnectionPool.new(size: 5, timeout: 5) { Redis.new(:host => ENV['REDIS_HOST'], :port => ENV['REDIS_PORT']) }
+    @list = Redis::List
   end
 
-  def lpop (key, count = 1)
-    @redis.lpop(key, Integer(count))
+  def lpop (queue, completed)
+    list = @list.new queue
+    list.rpoplpush completed
   end
 
   def rpush (queue, value)
-    @redis.rpush queue, value
+    list = @list.new queue
+    list.push value
   end
 
 end
