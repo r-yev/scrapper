@@ -23,7 +23,7 @@ class App
                               @completed_jobs_queue,
                               @jobs_queue,
                               @results_queue
-          worker.work(job)
+          worker.work job
         end
 
         thread.join
