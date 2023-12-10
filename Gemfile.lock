@@ -11,6 +11,7 @@ GEM
     httparty (0.21.0)
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
+    imgkit (1.6.3)
     logger (1.6.0)
     mechanize (2.9.1)
       addressable (~> 2.8)
@@ -33,6 +34,7 @@ GEM
       connection_pool (~> 2.2)
     nokogiri (1.15.4-x86_64-linux)
       racc (~> 1.4)
+    pdfkit (0.8.7.3)
     public_suffix (5.0.3)
     racc (1.7.3)
     redis (5.0.8)
@@ -41,9 +43,21 @@ GEM
       connection_pool
     redis-objects (1.7.0)
       redis
+    regexp_parser (2.8.1)
+    rexml (3.2.6)
     rubyntlm (0.6.3)
+    rubyzip (2.3.2)
+    selenium-webdriver (4.10.0)
+      rexml (~> 3.2, >= 3.2.5)
+      rubyzip (>= 1.2.2, < 3.0)
+      websocket (~> 1.0)
+    watir (7.3.0)
+      regexp_parser (>= 1.2, < 3)
+      selenium-webdriver (~> 4.2)
     webrick (1.8.1)
     webrobots (0.1.2)
+    websocket (1.2.10)
+    wkhtmltopdf-binary (0.12.6.6)
 
 PLATFORMS
   x86_64-linux
@@ -52,10 +66,14 @@ DEPENDENCIES
   connection_pool
   dotenv
   httparty
+  imgkit
   logger
   mechanize
   nokogiri
+  pdfkit
   redis-objects
+  watir
+  wkhtmltopdf-binary
 
 BUNDLED WITH
    2.4.22

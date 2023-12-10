@@ -1,13 +1,12 @@
 class Job
-  attr :url, :selector
-  attr_accessor :url, :selector
+  attr_accessor :proxy, :return_type, :target, :flow
 
-  def []=(key, value)
-    case key
-      when 'url' then @url = value
-      when 'selector' then @selector = value
-    else
-      throw "No field with name " + key
+  def initialize(proxy, return_type, target, flow)
+    @proxy = proxy
+    @return_type = return_type
+    @target = target
+    @flow = flow.map do |step|
+      Action.from_array(step)
     end
   end
 end
