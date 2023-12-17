@@ -25,7 +25,6 @@ class Worker
   end
 
   def work (job)
-    return_type = job.return_type
 
     @browser_service.goto "https://google.com"
     job.flow.each do |item|
@@ -33,6 +32,7 @@ class Worker
       case item.action
       when "navigate"
         @browser_service.goto item.options['url']
+        sleep item.wait unless item.wait.nil?
       when "click"
         execute 'document.querySelector("' + item.options['selector'] + '").click()', item.wait
       when "set_attribute"
@@ -45,21 +45,11 @@ class Worker
     end
 
     puts "Attempting to get HTML content of the element..."
-
-    js_script = <<~JS
-          function getHtmlBySelector(selector) {
-            var element = document.querySelector(selector);
-            return element ? element.outerHTML : null;
-            }
-    JS
-
-    selector = "#page-container-1 > div > div"
-    html = @browser_service.execute_script(js_script + "return getHtmlBySelector('#{selector}');")
-    puts "HTML Content:\n#{html}"
+    doc = Nokogiri::HTML(@browser_service.html)
+    result = doc.xpath(job.target)
     @browser_service.close
-    # puts html
 
-    # @redis_service.rpush(@results_queue, result.to_json)
+    @redis_service.rpush(@results_queue, result.to_json)
   end
 
   private def screenshot
