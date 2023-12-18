@@ -17,7 +17,6 @@ class App
 
   def run
     thread_pool = []
-    max_threads = 2 # Adjust the maximum number of threads as needed
 
     while Integer(@redis_service.llen @jobs_queue) > 0
       fetched = @redis_service.lpop(@jobs_queue, @completed_jobs_queue)
@@ -28,7 +27,7 @@ class App
         parsed = JSON.parse(fetched)
 
         # Limit the number of threads to the specified maximum
-        if thread_pool.size >= max_threads
+        if thread_pool.size.to_i >= ENV['THREAD_POOL_SIZE'].to_i
           # Wait for any running thread to finish before adding a new one
           thread = thread_pool.shift
           thread.join
