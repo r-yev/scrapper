@@ -16,6 +16,9 @@ class App
   end
 
   def run
+    thread_pool = []
+    max_threads = 2 # Adjust the maximum number of threads as needed
+
     while Integer(@redis_service.llen @jobs_queue) > 0
       fetched = @redis_service.lpop(@jobs_queue, @completed_jobs_queue)
 
@@ -23,6 +26,14 @@ class App
         throw new Exception('Nothing in queue')
       else
         parsed = JSON.parse(fetched)
+
+        # Limit the number of threads to the specified maximum
+        if thread_pool.size >= max_threads
+          # Wait for any running thread to finish before adding a new one
+          thread = thread_pool.shift
+          thread.join
+        end
+
         thread = Thread.new do
           job = Job.new(parsed['proxy'], parsed['return'], parsed['target'], parsed['flow'])
           worker = Worker.new @redis_service,
@@ -33,9 +44,12 @@ class App
                               @logger_service
           worker.work(job)
         end
-        thread.join
+
+        thread_pool << thread
       end
     end
+
+    thread_pool.each(&:join)
   end
 
 end
